@@ -1,9 +1,9 @@
-import { Input } from "./components";
-import { Carousel } from "./components/Carousel";
+import { Carousel, Input, Stepper } from "./components";
 
 function App() {
   return (
-    <div>
+    <div className="form">
+      <Stepper currentStep={1} steps={3}/>
       <Carousel
         currentStep={1}
         steps={[
@@ -21,6 +21,8 @@ function App() {
           },
         ]}
       />
+      <div className="form__controls">Controls</div>
+
     </div>
   );
 }
