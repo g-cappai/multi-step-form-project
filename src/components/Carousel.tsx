@@ -11,7 +11,7 @@ export function Carousel({ steps, currentStep }: Props) {
         style={{ transform: `translateX(-${currentStep * 100}%)` }}
       >
         {steps.map((step) => (
-          <div className="carousel__step">
+          <div key={step.title.trim()} className="carousel__step">
             {step.content}
           </div>
         ))}
