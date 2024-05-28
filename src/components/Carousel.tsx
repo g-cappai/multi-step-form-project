@@ -1,3 +1,5 @@
+import { Stepper } from "./Stepper";
+
 type Props = {
   steps: { title: string; content: React.ReactElement }[];
   currentStep: number;
@@ -6,6 +8,7 @@ type Props = {
 export function Carousel({ steps, currentStep }: Props) {
   return (
     <div className="carousel">
+      <Stepper currentStep={currentStep} steps={steps.length} />
       <div
         className="carousel__content"
         style={{ transform: `translateX(-${currentStep * 100}%)` }}
