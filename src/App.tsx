@@ -1,28 +1,49 @@
-import { Carousel, Input, Stepper } from "./components";
+import { useState } from "react";
+import { Carousel, Input } from "./components";
+import { Controls } from "./components";
+import { useMobileScreenWidth } from "./hooks/useMobileScreenWidth";
 
 function App() {
-  return (
-    <div className="form">
-      <Stepper currentStep={1} steps={3}/>
-      <Carousel
-        currentStep={1}
-        steps={[
-          {
-            title: "Step 1",
-            content: <Input />,
-          },
-          {
-            title: "Step 2",
-            content: <Input />,
-          },
-          {
-            title: "Step 3",
-            content: <Input />,
-          },
-        ]}
-      />
-      <div className="form__controls">Controls</div>
+  const [step, setStep] = useState(0);
 
+  const isMobile = useMobileScreenWidth();
+
+  const steps = [
+    {
+      title: "Step 1",
+      content: <Input />,
+    },
+    {
+      title: "Step 2",
+      content: <Input />,
+    },
+    {
+      title: "Step 3",
+      content: <Input />,
+    },
+  ];
+
+  const handleNext = () => {
+    // Validate the form
+    // If the form is invalid proceed
+    setStep((prevStep) => prevStep + 1);
+  };
+
+  const handleBack = () => {
+    setStep((prevStep) => prevStep - 1);
+  };
+
+  return (
+    <div className="container">
+      <div className="form">
+        {isMobile ? <Carousel currentStep={step} steps={steps} /> : <>miao</>}
+        <Controls
+          disableBack={step == 0}
+          disableNext={false}
+          onBack={handleBack}
+          onNext={handleNext}
+        />
+      </div>
     </div>
   );
 }
