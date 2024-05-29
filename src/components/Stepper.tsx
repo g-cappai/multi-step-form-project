@@ -14,7 +14,7 @@ export function Stepper({ steps: stepsAmount, currentStep }: Props) {
         return (
           <div
             key={index}
-            className={`step ${currentStep === index ? "step--active" : ""}`}
+            className={`step ${currentStep > index ? "step--active" : ""}`}
           >
             <div className="step__number">{index + 1}</div>
           </div>
