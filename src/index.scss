@@ -170,3 +170,71 @@ html {
         cursor: not-allowed;
     }
 }
+
+.accordion {
+    padding: 2rem 2rem 0 2rem;
+
+    .section {
+
+        &__title {
+            display: flex;
+            align-items: baseline;
+            border-radius: $rounded;
+            margin-bottom: 1rem;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            padding-right: 2rem;
+            padding-left: 2rem;
+            font-size: 1.6rem;
+            font-weight: 600;
+            background-color: $bg-color;
+
+            &--active {
+                padding-top: 1rem;
+                padding-bottom: 0;
+                margin-bottom: 0;
+                background-color: transparent;
+            }
+        }
+
+        &__foldable {
+            overflow: hidden;
+            height: 0;
+
+            &--open {
+                height: fit-content;
+            }
+        }
+
+        &__number {
+            margin-right: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 4.2rem;
+            height: 4.2rem;
+            border-radius: 50%;
+            background-color: $not-active-color;
+            transition:
+                background-color 0.3s, color 0.3s;
+            ;
+            font-size: 1.5rem;
+            font-weight: 600;
+
+            &--active {
+                color: $bg-color-light;
+                background-color: $active-color;
+            }
+        }
+
+        &__content {
+            padding-left: 2rem;
+            padding-right: 2rem;
+            margin-bottom: 3rem;
+            margin-top: 2rem;
+        }
+
+
+
+    }
+}
