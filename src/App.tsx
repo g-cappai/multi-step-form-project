@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Carousel, Input } from "./components";
+import { Accordion, Carousel, Input } from "./components";
 import { Controls } from "./components";
 import { useMobileScreenWidth } from "./hooks/useMobileScreenWidth";
 
@@ -36,7 +36,11 @@ function App() {
   return (
     <div className="container">
       <div className="form">
-        {isMobile ? <Carousel currentStep={step} steps={steps} /> : <>miao</>}
+        {isMobile ? (
+          <Carousel currentStep={step} steps={steps} />
+        ) : (
+          <Accordion currentStep={step} steps={steps} />
+        )}
         <Controls
           disableBack={step == 0}
           disableNext={false}
