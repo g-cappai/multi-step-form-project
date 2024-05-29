@@ -3,7 +3,7 @@ type InputProps = {
   name: string;
   value: string;
   errorMessage?: string;
-  onChange: (text: string) => void;
+  onChange: (value: string) => void;
 };
 
 export function Input({
