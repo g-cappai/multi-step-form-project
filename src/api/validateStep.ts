@@ -27,7 +27,6 @@ export async function validateStep(
 
   return new Promise((resolve) => {
     const errors = getErrors(payload);
-    console.log({ errors });
     setTimeout(() => {
       if (!errors.length) {
         resolve({ status: "success" });
