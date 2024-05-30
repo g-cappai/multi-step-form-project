@@ -1,12 +1,19 @@
 type Props = {
-  disabled: boolean;
+  disabled?: boolean;
   content: string;
   onClick: () => void;
 };
 
 export function Button({ disabled, content, onClick }: Props) {
   return (
-    <button disabled={disabled} className="button" onClick={onClick}>
+    <button
+      disabled={disabled}
+      className="button"
+      onClick={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
+    >
       {content}
     </button>
   );
