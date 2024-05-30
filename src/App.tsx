@@ -3,41 +3,12 @@ import { getValidationStatus } from "./api/getvalidationStatus";
 import { Accordion, Button, Carousel, Input } from "./components";
 import { useMobileScreenWidth } from "./hooks/useMobileScreenWidth";
 import { useForm } from "react-hook-form";
+import { stepsSchema } from "./schemas/steps.schema";
 
-export type FormData = {
+type FormData = {
   currentStep: number;
   steps: [{ name: string }, { city: string }, { address: string }];
 };
-
-const stepsSchema = [
-  {
-    title: "Step 1",
-    inputs: [
-      {
-        label: "Name",
-        name: "steps.0.name",
-      },
-    ],
-  },
-  {
-    title: "Step 2",
-    inputs: [
-      {
-        label: "City",
-        name: "steps.1.city",
-      },
-    ],
-  },
-  {
-    title: "Step 3",
-    inputs: [
-      {
-        label: "Address",
-        name: "steps.2.address",
-      },
-    ],
-  },
-];
 
 function App() {
   const isMobile = useMobileScreenWidth();
