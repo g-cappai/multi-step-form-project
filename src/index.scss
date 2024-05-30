@@ -161,11 +161,16 @@ html {
             font-weight: 600;
         }
 
-        &--active {
+        &--done {
             color: $bg-color-light;
             background-color: $active-color;
         }
 
+        &--active {
+            border: 0.2rem solid $active-color;
+            color: $active-color;
+            background-color: $bg-color-light;
+        }
     }
 }
 

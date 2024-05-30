@@ -16,7 +16,7 @@ export function Accordion({ steps, currentStep, completed }: Props) {
           >
             <div
               className={`section__number ${
-                index < currentStep ? "section__number--active" : ""
+                index <= currentStep ? "section__number--active" : ""
               }`}
             >
               {index + 1}
