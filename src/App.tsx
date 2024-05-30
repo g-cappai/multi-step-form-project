@@ -1,42 +1,24 @@
-import { useState } from "react";
+import { validateStep } from "./api/validateStep";
 import { Accordion, Carousel, Input } from "./components";
 import { Controls } from "./components";
 import { useMobileScreenWidth } from "./hooks/useMobileScreenWidth";
-import { validateStep } from "./api/validateStep";
+import { useForm } from "react-hook-form";
 
-type InputValue = {
-  value: string;
-  errorMessage?: string;
+export type FormData = {
+  currentStep: number;
+  steps: [{ name: string }, { surname: string }, { address: string }];
 };
 
 function App() {
-  const [step, setStep] = useState(0);
-
   const isMobile = useMobileScreenWidth();
-
-  const [stepOne, setStepOne] = useState<{
-    name: InputValue;
-  }>({
-    name: {
-      value: "",
-    },
-  });
-
-  const [stepTwo, setStepTwo] = useState<{
-    surname: InputValue;
-  }>({
-    surname: {
-      value: "",
-    },
-  });
-
-  const [stepThree, setStepThree] = useState<{
-    address: InputValue;
-  }>({
-    address: {
-      value: "",
-    },
-  });
+  const { control, clearErrors, setValue, setError, watch } = useForm<FormData>(
+    {
+      values: {
+        currentStep: 0,
+        steps: [{ name: "" }, { surname: "" }, { address: "" }],
+      },
+    }
+  );
 
   const steps = [
     {
@@ -45,11 +27,7 @@ function App() {
         <Input
           label="Name"
           name="name"
-          value={stepOne.name.value}
-          errorMessage={stepOne.name.errorMessage}
-          onChange={(value) =>
-            setStepOne((c) => ({ name: { ...c.name, value } }))
-          }
+          controller={{ control, name: "steps.0.name" }}
         />
       ),
     },
@@ -59,11 +37,7 @@ function App() {
         <Input
           label="Surname"
           name="surname"
-          value={stepTwo.surname.value}
-          errorMessage={stepTwo.surname.errorMessage}
-          onChange={(value) =>
-            setStepTwo((c) => ({ surname: { ...c.surname, value } }))
-          }
+          controller={{ control, name: "steps.1.surname" }}
         />
       ),
     },
@@ -73,93 +47,71 @@ function App() {
         <Input
           label="Address"
           name="address"
-          value={stepThree.address.value}
-          errorMessage={stepThree.address.errorMessage}
-          onChange={(value) =>
-            setStepThree((c) => ({ address: { ...c.address, value } }))
-          }
+          controller={{ control, name: "steps.2.address" }}
         />
       ),
     },
   ];
 
   const handleNext = async () => {
-    const stepValidation = await validateStep(
-      step === 0
-        ? {
-            stepNumber: 0,
-            values: [
-              {
-                inputName: "name",
-                inputValue: stepOne.name.value,
-              },
-            ],
-          }
-        : step === 1
-        ? {
-            stepNumber: 1,
-            values: [
-              {
-                inputName: "surname",
-                inputValue: stepTwo.surname.value,
-              },
-            ],
-          }
-        : {
-            stepNumber: 2,
-            values: [
-              {
-                inputName: "address",
-                inputValue: stepThree.address.value,
-              },
-            ],
-          }
-    );
+    const validationData = await validateStep({
+      stepNumber: watch("currentStep"),
+      values: watch("steps")[watch("currentStep")],
+    });
 
-    if (stepValidation.status === "error") {
-      if (step === 0) {
-        setStepOne((c) => ({
-          name: {
-            ...c.name,
-            errorMessage: stepValidation.values[0].errorMessage,
-          },
-        }));
-      } else if (step === 1) {
-        setStepTwo((c) => ({
-          surname: {
-            ...c.surname,
-            errorMessage: stepValidation.values[0].errorMessage,
-          },
-        }));
+    if (watch("currentStep") === 0) {
+      if (validationData.status === "error") {
+        setError("steps.0.name", {
+          type: "server",
+          message: validationData.errors.name,
+        });
+        return;
       } else {
-        setStepThree((c) => ({
-          address: {
-            ...c.address,
-            errorMessage: stepValidation.values[0].errorMessage,
-          },
-        }));
+        clearErrors("steps.0.name");
       }
-
-      return;
     }
 
-    setStep((prevStep) => prevStep + 1);
+    if (watch("currentStep") === 1) {
+      if (validationData.status === "error") {
+        setError("steps.1.surname", {
+          type: "server",
+          message: validationData.errors.surname,
+        });
+        return;
+      } else {
+        clearErrors("steps.1.surname");
+      }
+    }
+
+    if (watch("currentStep") === 2) {
+      if (validationData.status === "error") {
+        setError("steps.2.address", {
+          type: "server",
+          message: validationData.errors.address,
+        });
+        return;
+      } else {
+        clearErrors("steps.2.address");
+      }
+    }
+
+    setValue("currentStep", watch("currentStep") + 1);
   };
 
   const handleBack = () => {
-    setStep((prevStep) => prevStep - 1);
+    setValue("currentStep", watch("currentStep") - 1);
   };
 
   return (
     <div className="container">
       <div className="form">
         {isMobile ? (
-          <Carousel currentStep={step} steps={steps} />
+          <Carousel currentStep={watch("currentStep")} steps={steps} />
         ) : (
-          <Accordion currentStep={step} steps={steps} />
+          <Accordion currentStep={watch("currentStep")} steps={steps} />
         )}
         <Controls
-          disableBack={step == 0}
+          disableBack={watch("currentStep") == 0}
           disableNext={false}
           onBack={handleBack}
           onNext={handleNext}
