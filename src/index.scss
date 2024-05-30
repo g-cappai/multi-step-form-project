@@ -89,11 +89,22 @@ html {
         border: 1px solid #ccc;
         border-radius: $rounded;
         outline: none;
+        
+        &--invalid {
+            border-color: red;
+        }
 
         &:focus {
             border-color: $active-color;
         }
     }
+
+    &__error {
+        color: red;
+        margin-top: 0.75rem;
+        font-size: 1.4rem;
+    }
+
 }
 
 .stepper {
