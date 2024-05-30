@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { validateStep } from "./api/validateStep";
 import { Accordion, Button, Carousel, Input } from "./components";
 import { useMobileScreenWidth } from "./hooks/useMobileScreenWidth";
@@ -9,9 +9,39 @@ export type FormData = {
   steps: [{ name: string }, { city: string }, { address: string }];
 };
 
+const steps = [
+  {
+    title: "Step 1",
+    inputs: [
+      {
+        label: "Name",
+        name: "steps.0.name",
+      },
+    ],
+  },
+  {
+    title: "Step 2",
+    inputs: [
+      {
+        label: "City",
+        name: "steps.1.city",
+      },
+    ],
+  },
+  {
+    title: "Step 3",
+    inputs: [
+      {
+        label: "Address",
+        name: "steps.2.address",
+      },
+    ],
+  },
+];
+
 function App() {
-  const [isFormLoading, setIsFormLoading] = useState(false);
   const isMobile = useMobileScreenWidth();
+  const [isFormLoading, setIsFormLoading] = useState(false);
   const { control, clearErrors, setValue, setError, watch } = useForm<FormData>(
     {
       values: {
@@ -21,46 +51,25 @@ function App() {
     }
   );
 
-  const steps = [
-    {
-      title: "Step 1",
-      content: (
-        <>
-          <Input
-            label="Name"
-            name="name"
-            controller={{ control, name: "steps.0.name" }}
-            tabIndex={watch("currentStep") === 0 ? 0 : -1}
-          />
-        </>
-      ),
-    },
-    {
-      title: "Step 2",
-      content: (
-        <Input
-          label="City"
-          name="city"
-          controller={{ control, name: "steps.1.city" }}
-          tabIndex={watch("currentStep") === 1 ? 0 : -1}
-        />
-      ),
-    },
-    {
-      title: "Step 3",
-      content: (
-        <Input
-          label="Address"
-          name="address"
-          controller={{ control, name: "steps.2.address" }}
-          tabIndex={watch("currentStep") === 2 ? 0 : -1}
-        />
-      ),
-    },
-  ];
+  const formSteps = useMemo(
+    () =>
+      steps.map<{ title: string; content: React.ReactElement }>((step) => ({
+        title: step.title,
+        content: (
+          <>
+            {step.inputs.map((input) => (
+              <Input
+                label={input.label}
+                controller={{ name: input.name as "steps.0.name", control }}
+              />
+            ))}
+          </>
+        ),
+      })),
+    [control]
+  );
 
-  const handleNext = async () => {
-    setIsFormLoading(true);
+  const validate = async (): Promise<boolean> => {
     const [currentStep, steps] = watch(["currentStep", "steps"]);
 
     const validationData = await validateStep({
@@ -76,8 +85,17 @@ function App() {
             validationData.errors[key as keyof typeof validationData.errors],
         });
       });
+      return false;
     } else {
       clearErrors(`steps.${currentStep}` as `steps.0`);
+      return true;
+    }
+  };
+
+  const handleNext = async () => {
+    setIsFormLoading(true);
+
+    if (await validate()) {
       setValue("currentStep", watch("currentStep") + 1);
     }
 
@@ -92,9 +110,9 @@ function App() {
     <div className="container">
       <form className="form" id="form">
         {isMobile ? (
-          <Carousel currentStep={watch("currentStep")} steps={steps} />
+          <Carousel currentStep={watch("currentStep")} steps={formSteps} />
         ) : (
-          <Accordion currentStep={watch("currentStep")} steps={steps} />
+          <Accordion currentStep={watch("currentStep")} steps={formSteps} />
         )}
         <div className="controls">
           <Button
