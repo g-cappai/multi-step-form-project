@@ -45,6 +45,18 @@ function App() {
     [control, currentStep]
   );
 
+  const handleErrors = (
+    errors: Record<string, string>,
+    currentStep: number
+  ) => {
+    Object.keys(errors).forEach((key) => {
+      setError(`steps.${currentStep}.${key}` as `steps.0.name`, {
+        type: "server",
+        message: errors[key],
+      });
+    });
+  };
+
   const validate = async (): Promise<boolean> => {
     const validationData = await getValidationStatus({
       stepNumber: currentStep,
@@ -52,13 +64,7 @@ function App() {
     });
 
     if (validationData.status === "error") {
-      Object.keys(validationData.errors).forEach((key) => {
-        setError(`steps.${currentStep}.${key}` as `steps.0.name`, {
-          type: "server",
-          message:
-            validationData.errors[key as keyof typeof validationData.errors],
-        });
-      });
+      handleErrors(validationData.errors, currentStep);
       return false;
     } else {
       clearErrors(`steps.${currentStep}` as `steps.0`);
@@ -68,8 +74,9 @@ function App() {
 
   const handleNext = async () => {
     setIsFormLoading(true);
+    const isValid = await validate();
 
-    if (await validate()) {
+    if (isValid) {
       setValue("currentStep", currentStep + 1);
     }
 
