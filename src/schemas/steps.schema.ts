@@ -14,7 +14,7 @@ const stepsData = [
 export const stepsSchema: StepSchema[] = stepsData.map((step, index) => ({
   title: step.title,
   inputs: step.fields.map((field) => ({
-    label: field,
+    label: `${field.charAt(0).toUpperCase()}${field.slice(1)}`,
     name: `steps.${index}.${field}`,
   })),
 }));
