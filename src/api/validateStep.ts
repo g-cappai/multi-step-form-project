@@ -1,9 +1,6 @@
 export type StepPayload = {
   stepNumber: number;
-  values: {
-    inputName: string;
-    inputValue: string;
-  }[];
+  values: { name: string } | { surname: string } | { address: string };
 };
 
 export type StepResponse =
@@ -12,10 +9,11 @@ export type StepResponse =
     }
   | {
       status: "error";
-      values: {
-        inputName: string;
-        errorMessage: string;
-      }[];
+      errors: {
+        name?: string;
+        surname?: string;
+        address?: string;
+      };
     };
 
 export async function validateStep(
@@ -23,15 +21,15 @@ export async function validateStep(
 ): Promise<StepResponse> {
   const isStepValid = (payload: StepPayload) => {
     if (payload.stepNumber === 0) {
-      return payload.values[0].inputValue === "step1";
+      return (payload.values as { name: string }).name === "Mario";
     }
 
-    if (payload.stepNumber === 0) {
-      return payload.values[0].inputValue === "step2";
+    if (payload.stepNumber === 1) {
+      return (payload.values as { surname: string }).surname === "Rossi";
     }
 
-    if (payload.stepNumber === 0) {
-      return payload.values[0].inputValue === "step3";
+    if (payload.stepNumber === 2) {
+      return (payload.values as { address: string }).address === "Via Roma, 1";
     }
 
     return false;
@@ -44,12 +42,11 @@ export async function validateStep(
       } else {
         resolve({
           status: "error",
-          values: [
-            {
-              inputName: payload.values[0].inputName,
-              errorMessage: "Invalid step",
-            },
-          ],
+          errors: {
+            name: payload.stepNumber === 0 ? "Invalid name" : undefined,
+            surname: payload.stepNumber === 1 ? "Invalid surname" : undefined,
+            address: payload.stepNumber === 2 ? "Invalid address" : undefined,
+          },
         });
       }
     }, 1000);
