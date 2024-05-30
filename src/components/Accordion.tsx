@@ -1,9 +1,10 @@
 type Props = {
   steps: { title: string; content: React.ReactElement }[];
   currentStep: number;
+  completed: boolean;
 };
 
-export function Accordion({ steps, currentStep }: Props) {
+export function Accordion({ steps, currentStep, completed }: Props) {
   return (
     <div className="accordion">
       {steps.map((step, index) => (
@@ -31,6 +32,14 @@ export function Accordion({ steps, currentStep }: Props) {
           </div>
         </div>
       ))}
+      {completed && (
+        <div className="section section--completed">
+          <h2 className="section__completed-title">Thank you!</h2>
+          <p className="section__completed-description">
+            Your submission has been received.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

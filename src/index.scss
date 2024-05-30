@@ -71,6 +71,23 @@ html {
         min-width: 100%;
         padding-right: 2rem;
         padding-left: 2rem;
+
+        &--completed {
+            text-align: center;
+            margin-top: 2rem;
+        }
+    }
+
+    &__complete-title {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    &__complete-description {
+        font-size: 1.6rem;
+        margin-bottom: 2rem;
+        margin-bottom: 0;
     }
 }
 
@@ -89,7 +106,7 @@ html {
         border: 1px solid #ccc;
         border-radius: $rounded;
         outline: none;
-        
+
         &--invalid {
             border-color: red;
         }
@@ -244,7 +261,23 @@ html {
             margin-top: 2rem;
         }
 
+        &--completed {
+            margin-top: 2rem;
+            text-align: center;
+        }
 
+        &__completed-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        &__completed-description {
+            font-size: 1.6rem;
+            margin-bottom: 2rem;
+            margin-bottom: 0;
+
+        }
 
     }
 }

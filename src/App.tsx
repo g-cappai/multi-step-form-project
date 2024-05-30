@@ -56,7 +56,7 @@ function App() {
     () =>
       stepsSchema.map<{ title: string; content: React.ReactElement }>(
         (step) => ({
-          title: step.title,
+          ...step,
           content: (
             <>
               {step.inputs.map((input, stepNumber) => (
@@ -99,34 +99,42 @@ function App() {
     setIsFormLoading(true);
 
     if (await validate()) {
-      setValue("currentStep", watch("currentStep") + 1);
+      setValue("currentStep", currentStep + 1);
     }
 
     setIsFormLoading(false);
   };
 
   const handleBack = () => {
-    setValue("currentStep", watch("currentStep") - 1);
+    setValue("currentStep", currentStep - 1);
   };
 
   return (
     <div className="container">
       <form className="form" id="form">
         {isMobile ? (
-          <Carousel currentStep={watch("currentStep")} steps={formSteps} />
+          <Carousel
+            currentStep={currentStep}
+            steps={formSteps}
+            completed={currentStep === 3}
+          />
         ) : (
-          <Accordion currentStep={watch("currentStep")} steps={formSteps} />
+          <Accordion
+            currentStep={currentStep}
+            steps={formSteps}
+            completed={currentStep === 3}
+          />
         )}
         <div className="controls">
           <Button
             type="button"
-            disabled={watch("currentStep") == 0 || isFormLoading}
+            disabled={[0, 3].includes(currentStep) || isFormLoading}
             content="Back"
             onClick={handleBack}
           />
           <Button
             type="submit"
-            disabled={isFormLoading}
+            disabled={currentStep === 3 || isFormLoading}
             content="Next"
             onClick={handleNext}
           />
