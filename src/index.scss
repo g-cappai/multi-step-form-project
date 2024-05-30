@@ -177,6 +177,7 @@ html {
 .controls {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin: 2rem;
 
 
@@ -285,4 +286,20 @@ html {
         }
 
     }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 0.3rem solid rgba(0, 0, 0, 0.1);
+    border-top-color: $active-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
