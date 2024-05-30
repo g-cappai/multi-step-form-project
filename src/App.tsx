@@ -1,21 +1,22 @@
+import { useState } from "react";
 import { validateStep } from "./api/validateStep";
-import { Accordion, Carousel, Input } from "./components";
-import { Controls } from "./components";
+import { Accordion, Button, Carousel, Input } from "./components";
 import { useMobileScreenWidth } from "./hooks/useMobileScreenWidth";
 import { useForm } from "react-hook-form";
 
 export type FormData = {
   currentStep: number;
-  steps: [{ name: string }, { surname: string }, { address: string }];
+  steps: [{ name: string }, { city: string }, { address: string }];
 };
 
 function App() {
+  const [isFormLoading, setIsFormLoading] = useState(false);
   const isMobile = useMobileScreenWidth();
   const { control, clearErrors, setValue, setError, watch } = useForm<FormData>(
     {
       values: {
         currentStep: 0,
-        steps: [{ name: "" }, { surname: "" }, { address: "" }],
+        steps: [{ name: "" }, { city: "" }, { address: "" }],
       },
     }
   );
@@ -24,20 +25,24 @@ function App() {
     {
       title: "Step 1",
       content: (
-        <Input
-          label="Name"
-          name="name"
-          controller={{ control, name: "steps.0.name" }}
-        />
+        <>
+          <Input
+            label="Name"
+            name="name"
+            controller={{ control, name: "steps.0.name" }}
+            tabIndex={watch("currentStep") === 0 ? 0 : -1}
+          />
+        </>
       ),
     },
     {
       title: "Step 2",
       content: (
         <Input
-          label="Surname"
-          name="surname"
-          controller={{ control, name: "steps.1.surname" }}
+          label="City"
+          name="city"
+          controller={{ control, name: "steps.1.city" }}
+          tabIndex={watch("currentStep") === 1 ? 0 : -1}
         />
       ),
     },
@@ -48,54 +53,35 @@ function App() {
           label="Address"
           name="address"
           controller={{ control, name: "steps.2.address" }}
+          tabIndex={watch("currentStep") === 2 ? 0 : -1}
         />
       ),
     },
   ];
 
   const handleNext = async () => {
+    setIsFormLoading(true);
+    const [currentStep, steps] = watch(["currentStep", "steps"]);
+
     const validationData = await validateStep({
-      stepNumber: watch("currentStep"),
-      values: watch("steps")[watch("currentStep")],
+      stepNumber: currentStep,
+      values: steps[currentStep],
     });
 
-    if (watch("currentStep") === 0) {
-      if (validationData.status === "error") {
-        setError("steps.0.name", {
+    if (validationData.status === "error") {
+      Object.keys(validationData.errors).forEach((key) => {
+        setError(`steps.${currentStep}.${key}` as `steps.0.name`, {
           type: "server",
-          message: validationData.errors.name,
+          message:
+            validationData.errors[key as keyof typeof validationData.errors],
         });
-        return;
-      } else {
-        clearErrors("steps.0.name");
-      }
+      });
+    } else {
+      clearErrors(`steps.${currentStep}` as `steps.0`);
+      setValue("currentStep", watch("currentStep") + 1);
     }
 
-    if (watch("currentStep") === 1) {
-      if (validationData.status === "error") {
-        setError("steps.1.surname", {
-          type: "server",
-          message: validationData.errors.surname,
-        });
-        return;
-      } else {
-        clearErrors("steps.1.surname");
-      }
-    }
-
-    if (watch("currentStep") === 2) {
-      if (validationData.status === "error") {
-        setError("steps.2.address", {
-          type: "server",
-          message: validationData.errors.address,
-        });
-        return;
-      } else {
-        clearErrors("steps.2.address");
-      }
-    }
-
-    setValue("currentStep", watch("currentStep") + 1);
+    setIsFormLoading(false);
   };
 
   const handleBack = () => {
@@ -104,19 +90,25 @@ function App() {
 
   return (
     <div className="container">
-      <div className="form">
+      <form className="form" id="form">
         {isMobile ? (
           <Carousel currentStep={watch("currentStep")} steps={steps} />
         ) : (
           <Accordion currentStep={watch("currentStep")} steps={steps} />
         )}
-        <Controls
-          disableBack={watch("currentStep") == 0}
-          disableNext={false}
-          onBack={handleBack}
-          onNext={handleNext}
-        />
-      </div>
+        <div className="controls">
+          <Button
+            disabled={watch("currentStep") == 0 || isFormLoading}
+            content="Back"
+            onClick={handleBack}
+          />
+          <Button
+            disabled={isFormLoading}
+            content="Next"
+            onClick={handleNext}
+          />
+        </div>
+      </form>
     </div>
   );
 }
