@@ -9,7 +9,7 @@ export type FormData = {
   steps: [{ name: string }, { city: string }, { address: string }];
 };
 
-const steps = [
+const stepsSchema = [
   {
     title: "Step 1",
     inputs: [
@@ -50,28 +50,31 @@ function App() {
       },
     }
   );
+  const [currentStep, steps] = watch(["currentStep", "steps"]);
 
   const formSteps = useMemo(
     () =>
-      steps.map<{ title: string; content: React.ReactElement }>((step) => ({
-        title: step.title,
-        content: (
-          <>
-            {step.inputs.map((input) => (
-              <Input
-                label={input.label}
-                controller={{ name: input.name as "steps.0.name", control }}
-              />
-            ))}
-          </>
-        ),
-      })),
-    [control]
+      stepsSchema.map<{ title: string; content: React.ReactElement }>(
+        (step) => ({
+          title: step.title,
+          content: (
+            <>
+              {step.inputs.map((input, stepNumber) => (
+                <Input
+                  label={input.label}
+                  controller={{ name: input.name as "steps.0.name", control }}
+                  key={input.name}
+                  tabIndex={currentStep !== stepNumber ? 0 : -1}
+                />
+              ))}
+            </>
+          ),
+        })
+      ),
+    [control, currentStep]
   );
 
   const validate = async (): Promise<boolean> => {
-    const [currentStep, steps] = watch(["currentStep", "steps"]);
-
     const validationData = await validateStep({
       stepNumber: currentStep,
       values: steps[currentStep],
@@ -116,11 +119,13 @@ function App() {
         )}
         <div className="controls">
           <Button
+            type="button"
             disabled={watch("currentStep") == 0 || isFormLoading}
             content="Back"
             onClick={handleBack}
           />
           <Button
+            type="submit"
             disabled={isFormLoading}
             content="Next"
             onClick={handleNext}
