@@ -6,20 +6,18 @@ import {
 
 type InputProps<T extends FieldValues> = {
   label: string;
-  name: string;
   tabIndex?: number;
 } & { controller: UseControllerProps<T> };
 
 export function Input<T extends FieldValues>({
   label,
-  name,
   controller,
   tabIndex,
 }: InputProps<T>) {
   const { field, fieldState } = useController(controller);
   return (
     <div className="input">
-      <label className="input__label" htmlFor={name}>
+      <label className="input__label" htmlFor={field.name}>
         {label}
       </label>
       <input
@@ -27,7 +25,7 @@ export function Input<T extends FieldValues>({
         className={`input__field ${
           fieldState.invalid ? "input__field--invalid" : ""
         }`}
-        name={name}
+        name={field.name}
         type="text"
         value={field.value}
         onChange={(e) => field.onChange(e.target.value)}
