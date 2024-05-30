@@ -26,16 +26,16 @@ function App() {
   const formSteps = useMemo(
     () =>
       stepsSchema.map<{ title: string; content: React.ReactElement }>(
-        (step) => ({
+        (step, stepNumber) => ({
           ...step,
           content: (
             <>
-              {step.inputs.map((input, stepNumber) => (
+              {step.inputs.map((input) => (
                 <Input
                   label={input.label}
                   controller={{ name: input.name as "steps.0.name", control }}
                   key={input.name}
-                  tabIndex={currentStep !== stepNumber ? 0 : -1}
+                  tabIndex={currentStep === stepNumber ? 0 : -1}
                 />
               ))}
             </>
@@ -103,6 +103,7 @@ function App() {
             content="Back"
             onClick={handleBack}
           />
+          {isFormLoading && <div className="spinner"></div>}
           <Button
             type="submit"
             disabled={currentStep === 3 || isFormLoading}
