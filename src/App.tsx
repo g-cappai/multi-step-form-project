@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { validateStep } from "./api/validateStep";
+import { getValidationStatus } from "./api/getvalidationStatus";
 import { Accordion, Button, Carousel, Input } from "./components";
 import { useMobileScreenWidth } from "./hooks/useMobileScreenWidth";
 import { useForm } from "react-hook-form";
@@ -75,7 +75,7 @@ function App() {
   );
 
   const validate = async (): Promise<boolean> => {
-    const validationData = await validateStep({
+    const validationData = await getValidationStatus({
       stepNumber: currentStep,
       values: steps[currentStep],
     });
