@@ -23,7 +23,7 @@ export async function getValidationStatus(
    */
   const getErrors = (payload: StepPayload): [string, string][] => {
     return Object.entries(payload.values)
-      .filter(([_, value]) => !value)
+      .filter(([_, value]) => !value.trim())
       .map(([key]) => [key, "This field is required!"]);
   };
 
