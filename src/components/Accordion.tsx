@@ -1,4 +1,4 @@
-import { FormSteps } from "../App";
+import { FormSteps } from "../utils/steps";
 
 type Props = {
   steps: FormSteps;

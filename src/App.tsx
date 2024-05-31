@@ -3,14 +3,12 @@ import { getValidationStatus } from "./api/getvalidationStatus";
 import { Accordion, Button, Carousel, Input } from "./components";
 import { useMobileScreenWidth } from "./hooks/useMobileScreenWidth";
 import { useForm } from "react-hook-form";
-import { stepsSchema } from "./schemas/steps.schema";
+import { FormSteps, getFormSteps, stepsInitialValues } from "./utils/steps";
 
 type FormData = {
   currentStep: number;
-  steps: [{ name: string }, { city: string }, { address: string }];
+  steps: { [key: string]: string }[];
 };
-
-export type FormSteps = { title: string; content: React.ReactElement }[];
 
 function App() {
   const isMobile = useMobileScreenWidth();
@@ -19,7 +17,7 @@ function App() {
     {
       values: {
         currentStep: 0,
-        steps: [{ name: "" }, { city: "" }, { address: "" }],
+        steps: stepsInitialValues,
       },
     }
   );
@@ -27,23 +25,18 @@ function App() {
 
   const formSteps: FormSteps = useMemo(
     () =>
-      stepsSchema.map<{ title: string; content: React.ReactElement }>(
-        (step, stepNumber) => ({
-          ...step,
-          content: (
-            <>
-              {step.inputs.map((input) => (
-                <Input
-                  label={input.label}
-                  controller={{ name: input.name as "steps.0.name", control }}
-                  key={input.name}
-                  tabIndex={currentStep === stepNumber ? 0 : -1}
-                />
-              ))}
-            </>
-          ),
-        })
-      ),
+      getFormSteps((step, stepNumber) => (
+        <>
+          {step.inputs.map((input) => (
+            <Input
+              label={input.label}
+              controller={{ name: input.name as "steps.0.name", control }}
+              key={input.name}
+              tabIndex={currentStep === stepNumber ? 0 : -1}
+            />
+          ))}
+        </>
+      )),
     [control, currentStep]
   );
 
