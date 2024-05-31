@@ -222,7 +222,7 @@ html {
             font-weight: 600;
             background-color: $bg-color;
 
-            &--active {
+            &--done {
                 padding-top: 1rem;
                 padding-bottom: 0;
                 margin-bottom: 0;
@@ -254,9 +254,15 @@ html {
             font-size: 1.5rem;
             font-weight: 600;
 
-            &--active {
+            &--done {
                 color: $bg-color-light;
                 background-color: $active-color;
+            }
+
+            &--active {
+                border: 0.2rem solid $active-color;
+                color: $active-color;
+                background-color: $bg-color-light;
             }
         }
 

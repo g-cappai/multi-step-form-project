@@ -13,12 +13,16 @@ export function Accordion({ steps, currentStep, completed }: Props) {
         <div className="section" key={step.title.trim()}>
           <div
             className={`section__title ${
-              index == currentStep ? "section__title--active" : ""
+              index == currentStep ? "section__title--done" : ""
             }`}
           >
             <div
               className={`section__number ${
-                index <= currentStep ? "section__number--active" : ""
+                index < currentStep
+                  ? "section__number--done"
+                  : index === currentStep
+                  ? "section__number--active"
+                  : ""
               }`}
             >
               {index + 1}
