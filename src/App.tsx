@@ -10,6 +10,8 @@ type FormData = {
   steps: [{ name: string }, { city: string }, { address: string }];
 };
 
+export type FormSteps = { title: string; content: React.ReactElement }[];
+
 function App() {
   const isMobile = useMobileScreenWidth();
   const [isFormLoading, setIsFormLoading] = useState(false);
@@ -23,7 +25,7 @@ function App() {
   );
   const [currentStep, steps] = watch(["currentStep", "steps"]);
 
-  const formSteps = useMemo(
+  const formSteps: FormSteps = useMemo(
     () =>
       stepsSchema.map<{ title: string; content: React.ReactElement }>(
         (step, stepNumber) => ({

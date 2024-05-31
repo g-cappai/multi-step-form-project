@@ -1,7 +1,8 @@
+import { FormSteps } from "../App";
 import { Stepper } from "./Stepper";
 
 type Props = {
-  steps: { title: string; content: React.ReactElement }[];
+  steps: FormSteps;
   currentStep: number;
   completed: boolean;
 };
